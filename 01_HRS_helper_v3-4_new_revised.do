@@ -2,14 +2,14 @@
 * ==============================================================================
 * HRS HELPER
 *
-* current version: 6/05/22
+* current version: 7/26/24
 * author: Matt Braaksma
 * ==============================================================================
 
 
 * ==============================================================================
-* Input: HRS Exit files for 2004-2018
-*        HRS Core files for 2002-2016
+* Input: HRS Exit files for 2004-2020
+*        HRS Core files for 2002-2018
 * Output: Helper-level file
 * ==============================================================================
 
@@ -25,17 +25,15 @@ macro drop _all
 
 
 * Set Directory ================================================================
-glo path="/Users/mbraaksma/Desktop/HRS" // Matt's path
-  glo data="$path/Data/00_HRS_Raw"
-  glo scripts="$path/Scripts"
-  cd $scripts
-// do 01_HRS_helper_v3-4_new_revised.do
+glo path="/Volumes/T7 Touch" // Matt's path
+  glo data="$path/data_raw/HRS"
+  glo output="$path/data_projects/HRS"
 * ==============================================================================
 
 
 * EXIT: MERGE WAVES ===================================================
 // MERGE LOOP
-foreach y in 02 04 06 08 10 12 14 16 18 {
+foreach y in 02 04 06 08 10 12 14 16 18 20 {
 
   // WAVE
   if `y'==02 local wave "S"
@@ -47,6 +45,7 @@ foreach y in 02 04 06 08 10 12 14 16 18 {
   if `y'==14 local wave "Y"
   if `y'==16 local wave "Z"
   if `y'==18 local wave "XQ"
+  if `y'==20 local wave "XR"
 
   // RESPONDENT-LEVEL FILES
   use "$data/x`y'exit/x`y'dta/X`y'PR_R.dta", clear
@@ -122,7 +121,7 @@ foreach y in 02 04 06 08 10 12 14 16 18 {
 
 * CORE: MERGE WAVES ===================================================
 // MERGE LOOP
-foreach y in 00 02 04 06 08 10 12 14 16 {
+foreach y in 00 02 04 06 08 10 12 14 16 18 20 {
 
   // WAVE
   if `y'==00 local wave "G"
@@ -134,6 +133,8 @@ foreach y in 00 02 04 06 08 10 12 14 16 {
   if `y'==12 local wave "N"
   if `y'==14 local wave "O"
   if `y'==16 local wave "P"
+  if `y'==18 local wave "Q"
+  if `y'==20 local wave "R"
 
   // RESPONDENT-LEVEL FILES
   use "$data/h`y'core/h`y'dta/H`y'PR_R.dta", clear
@@ -146,14 +147,14 @@ foreach y in 00 02 04 06 08 10 12 14 16 {
   merge 1:1 HHID PN using "$data/h`y'core/h`y'dta/H`y'N_R.dta", nogen
   merge 1:1 HHID PN using "$data/h`y'core/h`y'dta/H`y'T_R.dta", nogen
   if `y'>00 {
-    merge 1:1 HHID PN using "$data/h`y'core/h`y'dta/H`y'M1_R.dta", nogen //
-    merge 1:1 HHID PN using "$data/h`y'core/h`y'dta/H`y'P_R.dta", nogen //
-    merge 1:1 HHID PN using "$data/h`y'core/h`y'dta/H`y'S_R.dta", nogen //
-    merge 1:1 HHID PN using "$data/h`y'core/h`y'dta/H`y'V_R.dta", nogen //
-    merge 1:1 HHID PN using "$data/h`y'core/h`y'dta/H`y'W_R.dta", nogen //
+    merge 1:1 HHID PN using "$data/h`y'core/h`y'dta/H`y'M1_R.dta", nogen 
+    merge 1:1 HHID PN using "$data/h`y'core/h`y'dta/H`y'P_R.dta", nogen 
+    merge 1:1 HHID PN using "$data/h`y'core/h`y'dta/H`y'S_R.dta", nogen 
+    merge 1:1 HHID PN using "$data/h`y'core/h`y'dta/H`y'V_R.dta", nogen 
+    merge 1:1 HHID PN using "$data/h`y'core/h`y'dta/H`y'W_R.dta", nogen 
   }
   if `y'>02 {
-    merge 1:1 HHID PN using "$data/h`y'core/h`y'dta/H`y'LB_R.dta", nogen //
+    merge 1:1 HHID PN using "$data/h`y'core/h`y'dta/H`y'LB_R.dta", nogen 
   }
   if `y'>00 & `y'<16 {
     merge 1:1 HHID PN using "$data/h`y'core/h`y'dta/H`y'RC_R.dta", nogen
@@ -231,7 +232,8 @@ foreach y in 00 02 04 06 08 10 12 14 16 {
   if `y'>04 {
     merge 1:1 HHID `wave'SUBHH using "$data/h`y'core/h`y'dta/H`y'U_H.dta", nogen
 
-    preserve
+    if `y' != 20 {
+      preserve
       use "$data/h`y'core/h`y'dta/H`y'IO_H.dta", clear
         rename (HHID `wave'SUBHH) (_HHID _`wave'SUBHH)
         rename `wave'* `wave'IO*
@@ -240,6 +242,7 @@ foreach y in 00 02 04 06 08 10 12 14 16 {
         save `hh_IO'
     restore
     merge 1:1 HHID `wave'SUBHH using `hh_IO', nogen
+    }
   }
 
 
@@ -396,7 +399,7 @@ foreach y in 00 02 04 06 08 10 12 14 16 {
 
 
 // MERGE CORE LEVELS: R + MC
-local waves 02 04 06 08 10 12 14 16 18
+local waves 02 04 06 08 10 12 14 16 18 20
 foreach y of local waves {
 
   if `y'==02 local core_y "00"
@@ -408,6 +411,7 @@ foreach y of local waves {
   if `y'==14 local core_y "12"
   if `y'==16 local core_y "14"
   if `y'==18 local core_y "16"
+  if `y'==20 local core_y "18"
   di "`y'"
 
   use `r_core_`core_y'', clear
@@ -505,7 +509,7 @@ foreach y of local waves {
 // ADD TRANFERS
 // EXIT TC 2006-2018
 use `tc_exit_06', clear
-foreach y in 08 10 12 14 16 18 {
+foreach y in 08 10 12 14 16 18 20 {
   append using `tc_exit_`y''
 }
 collapse (first) E076 E078 E086 (sum) E081, by(HHID PN OPN)
@@ -515,7 +519,7 @@ save `tc_exit'
 
 // FC 2006-2018
 use `fc_exit_06', clear
-foreach y in 08 10 12 14 16 18 {
+foreach y in 08 10 12 14 16 18 20 {
   append using `fc_exit_`y''
 }
 collapse (first) E088 E090 E099 (sum) E093, by(HHID PN OPN)
@@ -549,7 +553,7 @@ save `fc_exit'
 
 * APPEND ALL WAVES =================================================================
 use `hp_mc_r_02', clear
-foreach y in 04 06 08 10 12 14 16 18 {
+foreach y in 04 06 08 10 12 14 16 18 20 {
   append using `hp_mc_r_`y'', force
   isid HHID PN OPN xyear, missok
 }
@@ -732,7 +736,7 @@ gen_var_match_opn N214 0 "c" // WHICH CHILD PAY HEALTH CARE COSTS
 gen_var_match_opn T004 1 "c" // WHICH CHILD IS INCLUDED IN WILL
 gen_var_match_opn T017 0 "c" // WHO ARE BENEFFICIARIES
 gen_var_match_opn T029 0 "c" // WHO ARE BENEFICIARIES OF THESE INS
-gen_var_match_opn T209 0     // WHICH CHILD AUTHORITY (POWER OF ATTORNEY)
+gen_var_match_opn T209 0 ""    // WHICH CHILD AUTHORITY (POWER OF ATTORNEY)
 
 
 
@@ -1527,7 +1531,7 @@ drop if mi(G069)
 order xyear xwave HHID PN OPN SUBHH in_core*
 sort xyear HHID PN OPN
 
-save "$path/Data/Processed/hrs_helper_v3-4_new_revised", replace
+save "$output/hrs_helper_v3-4_new_revised", replace
 * ==============================================================================
 
 
