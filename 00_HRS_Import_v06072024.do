@@ -75,8 +75,9 @@ args wave exit_list
 
 end
 
-importexit "20" "A_R B_R C_R D_R E_FC E_R E_TC G_HP G_R IO_R J_R N_R PR_MC PR_R T_R Y_R"
-importexit "18" "A_R B_R C_R D_R E_FC E_R E_TC G_HP G_R IO_R J_R N_R PR_MC PR_R T_R Y_R"
+// New releases come with dta files (infile not working correctly)
+// importexit "20" "A_R B_R C_R D_R E_FC E_R E_TC G_HP G_R IO_R J_R N_R PR_MC PR_R T_R Y_R"
+// importexit "18" "A_R B_R C_R D_R E_FC E_R E_TC G_HP G_R IO_R J_R N_R PR_MC PR_R T_R Y_R"
 importexit "16" "A_R B_R C_R D_R E_FC E_R E_TC G_HP G_R IO_R J_R N_R PR_MC PR_R T_R Y_R"
 importexit "14" "A_R B_R C_R D_R E_FC E_R E_TC G_HP G_R IO_R J_R N_R PR_MC PR_R T_R Y_R"
 importexit "12" "A_R B_R C_R D_R E_FC E_R E_TC G_HP G_R IO_R J_R N_R PR_MC PR_R T_R Y_R"

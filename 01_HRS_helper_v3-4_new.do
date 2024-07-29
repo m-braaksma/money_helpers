@@ -121,7 +121,7 @@ foreach y in 02 04 06 08 10 12 14 16 18 20 {
 
 * CORE: MERGE WAVES ===================================================
 // MERGE LOOP
-foreach y in 00 02 04 06 08 10 12 14 16 18 {
+foreach y in 00 02 04 06 08 10 12 14 16 18 20 {
 
   // WAVE
   if `y'==00 local wave "G"
@@ -134,6 +134,7 @@ foreach y in 00 02 04 06 08 10 12 14 16 18 {
   if `y'==14 local wave "O"
   if `y'==16 local wave "P"
   if `y'==18 local wave "Q"
+  if `y'==20 local wave "R"
 
   // RESPONDENT-LEVEL FILES
   use "$data/h`y'core/h`y'dta/H`y'PR_R.dta", clear
@@ -146,14 +147,14 @@ foreach y in 00 02 04 06 08 10 12 14 16 18 {
   merge 1:1 HHID PN using "$data/h`y'core/h`y'dta/H`y'N_R.dta", nogen
   merge 1:1 HHID PN using "$data/h`y'core/h`y'dta/H`y'T_R.dta", nogen
   if `y'>00 {
-    merge 1:1 HHID PN using "$data/h`y'core/h`y'dta/H`y'M1_R.dta", nogen //
-    merge 1:1 HHID PN using "$data/h`y'core/h`y'dta/H`y'P_R.dta", nogen //
-    merge 1:1 HHID PN using "$data/h`y'core/h`y'dta/H`y'S_R.dta", nogen //
-    merge 1:1 HHID PN using "$data/h`y'core/h`y'dta/H`y'V_R.dta", nogen //
-    merge 1:1 HHID PN using "$data/h`y'core/h`y'dta/H`y'W_R.dta", nogen //
+    merge 1:1 HHID PN using "$data/h`y'core/h`y'dta/H`y'M1_R.dta", nogen 
+    merge 1:1 HHID PN using "$data/h`y'core/h`y'dta/H`y'P_R.dta", nogen 
+    merge 1:1 HHID PN using "$data/h`y'core/h`y'dta/H`y'S_R.dta", nogen 
+    merge 1:1 HHID PN using "$data/h`y'core/h`y'dta/H`y'V_R.dta", nogen 
+    merge 1:1 HHID PN using "$data/h`y'core/h`y'dta/H`y'W_R.dta", nogen 
   }
   if `y'>02 {
-    merge 1:1 HHID PN using "$data/h`y'core/h`y'dta/H`y'LB_R.dta", nogen //
+    merge 1:1 HHID PN using "$data/h`y'core/h`y'dta/H`y'LB_R.dta", nogen 
   }
   if `y'>00 & `y'<16 {
     merge 1:1 HHID PN using "$data/h`y'core/h`y'dta/H`y'RC_R.dta", nogen
@@ -231,7 +232,8 @@ foreach y in 00 02 04 06 08 10 12 14 16 18 {
   if `y'>04 {
     merge 1:1 HHID `wave'SUBHH using "$data/h`y'core/h`y'dta/H`y'U_H.dta", nogen
 
-    preserve
+    if `y' != 20 {
+      preserve
       use "$data/h`y'core/h`y'dta/H`y'IO_H.dta", clear
         rename (HHID `wave'SUBHH) (_HHID _`wave'SUBHH)
         rename `wave'* `wave'IO*
@@ -240,6 +242,7 @@ foreach y in 00 02 04 06 08 10 12 14 16 18 {
         save `hh_IO'
     restore
     merge 1:1 HHID `wave'SUBHH using `hh_IO', nogen
+    }
   }
 
 
@@ -408,6 +411,7 @@ foreach y of local waves {
   if `y'==14 local core_y "12"
   if `y'==16 local core_y "14"
   if `y'==18 local core_y "16"
+  if `y'==20 local core_y "18"
   di "`y'"
 
   use `r_core_`core_y'', clear
